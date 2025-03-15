@@ -15,9 +15,15 @@
   "author": "",
   "license": "MIT",
   "description": "Render text following the Whatsapp markups",
-  "dependencies": {
+  "peerDependencies": {
     "react": ">=16.0.0",
-    "react-dom": ">=16.0.0"
+    "react-dom": ">=16.0.0",
+    "react-scripts": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-scripts": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "marked": "^15.0.7",
