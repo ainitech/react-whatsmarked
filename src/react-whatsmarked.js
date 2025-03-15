@@ -1,0 +1,103 @@
+/*
+MIT License
+
+Copyright (c) 2025 Claudemir Todo Bom <claudemir@todobom.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+import React from "react";
+import { marked } from "marked";
+import "./react-whatsmarked.css";
+
+console.log(marked);
+
+class CustomRenderer extends marked.Renderer {
+  heading(input) {
+    console.log(input);
+    return marked.parseInline(input.raw);
+  }
+
+  em({ raw, text }) {
+    if (raw.startsWith("*")) {
+      return `<strong>${text}</strong>`;
+    }
+
+    return `<em>${text}</em>`;
+  }
+
+  strong({ raw, text }) {
+    const firstChar = raw.charAt(0);
+    if (firstChar === "_") {
+      return `${firstChar}<em>${text}</em>${firstChar}`;
+    }
+
+    return `${firstChar}<strong>${text}</strong>${firstChar}`;
+  }
+
+  unsupported(input) {
+    console.log(input);
+    return input.raw.replace("\n", "<br>");
+  }
+
+  checkbox(input) {
+    return this.unsupported(input);
+  }
+
+  table(input) {
+    return this.unsupported(input);
+  }
+
+  link({ href, text, raw }) {
+    if (href === raw) {
+      return `<a href="${href}" target="_blank">${text}</a>`;
+    }
+    return raw.replace("\n", "<br>");
+  }
+}
+
+const renderer = new CustomRenderer();
+
+marked.setOptions({
+  renderer,
+  gfm: true,
+  breaks: true,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false,
+});
+
+const WhatsMarked = ({ children, oneline, className }) => {
+  if (!children) return null;
+
+  // remove html
+  children = children.replaceAll("<", "&lt;");
+
+  // insert blank line after blockquotes
+  children = children.replace(/^(>.*)(\n(?!\n))/gm, "$1\n$2");
+
+  const htmlContent = oneline ? marked.parseInline(children) : marked.parse(children);
+
+  return <div
+    className={className || oneline ? "whatsmarkedOneline" : "whatsmarked"}
+    dangerouslySetInnerHTML={{ __html: htmlContent }}
+  />;
+};
+
+export default WhatsMarked;
