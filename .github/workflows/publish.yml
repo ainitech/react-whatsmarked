@@ -32,31 +32,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install @actions/github
-        run: npm install @actions/github
-
-      - name: Generate Release Notes
-        id: release_notes
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const gh = require('@actions/github');
-            const ctx = gh.context;
-            const latestRelease = await gh.repos.getLatestRelease({
-              owner: ctx.repo.owner,
-              repo: ctx.repo.repo
-            });
-            const commits = await gh.repos.listCommits({
-              owner: ctx.repo.owner,
-              repo: ctx.repo.repo,
-              since: latestRelease.data.published_at
-            });
-            let body = '## Changes since last release:\n';
-            commits.data.forEach(commit => {
-              body += `- ${commit.sha} ${commit.commit.message}\n`;
-            });
-            return body;
-
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
@@ -64,6 +39,5 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ${{ steps.release_notes.outputs.result }}
           draft: false
           prerelease: false
