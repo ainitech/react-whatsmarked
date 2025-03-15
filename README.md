@@ -91,6 +91,16 @@ export default App;
 
 You can format your custom class using the [src/react-whatsmarked.css](src/react-whatsmarked.css) as an example.
 
+Donations
+---------
+
+For being part of open source projects and documenting my work here I really do not charge anything.
+
+If you think that any information and code you obtained here is worth of some money and are willing to donate, feel free to send any amount through PayPal or Bitcoin.
+
+| Paypal | PIX (Brazil) |
+| ------ | ------------ |
+| [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X6XHVCPMRQEL4) | ![image](https://github.com/ticketz-oss/ticketz/assets/6070736/8e85b263-73ca-4fb4-9bdc-03fff356b6ff) <br> PIX Key: 0699c69d-0951-4686-a5b7-c6cd21aa7e15 |
 
 ## License
 
