@@ -32,6 +32,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Install @actions/github
+        run: npm install @actions/github
+
       - name: Generate Release Notes
         id: release_notes
         uses: actions/github-script@v6
