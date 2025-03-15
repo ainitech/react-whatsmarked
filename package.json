@@ -1,10 +1,14 @@
 {
   "name": "react-whatsmarked",
-  "version": "0.9.0",
+  "version": "0.9.2",
   "main": "lib/react-whatsmarked.js",
   "scripts": {
     "build": "webpack && copyfiles -u 1 src/*.css lib",
     "postinstall": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ticketz-oss/react-whatsmarked"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +16,9 @@
   "description": "Render text following the Whatsapp markups",
   "dependencies": {
     "react": ">=16.0.0",
-    "react-dom": ">=16.0.0"
+    "react-dom": ">=16.0.0",
+    "webpack": ">=5.94.0",
+    "webpack-cli": ">=6.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
@@ -22,8 +28,6 @@
     "copyfiles": "^2.4.1",
     "css-loader": "^7.1.2",
     "marked": "^15.0.7",
-    "style-loader": "^4.0.0",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1"
+    "style-loader": "^4.0.0"
   }
 }
