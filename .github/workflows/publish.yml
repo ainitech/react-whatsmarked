@@ -37,7 +37,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context, github } = require('@actions/github');
+            const github = require('@actions/github');
+            const context = github.context;
             const latestRelease = await github.repos.getLatestRelease({
               owner: context.repo.owner,
               repo: context.repo.repo
