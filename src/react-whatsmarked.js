@@ -26,11 +26,8 @@ import React from "react";
 import { marked } from "marked";
 import "./react-whatsmarked.css";
 
-console.log(marked);
-
 class CustomRenderer extends marked.Renderer {
   heading(input) {
-    console.log(input);
     return marked.parseInline(input.raw);
   }
 
@@ -52,7 +49,7 @@ class CustomRenderer extends marked.Renderer {
   }
 
   unsupported(input) {
-    console.log(input);
+    console.debug(input);
     return input.raw.replace("\n", "<br>");
   }
 
