@@ -24,30 +24,47 @@ SOFTWARE.
 
 import React from "react";
 import { marked } from "marked";
+
 import "./react-whatsmarked.css";
+
+function escapeHTML(html) {
+    return html.replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
 
 class CustomRenderer extends marked.Renderer {
   heading(input) {
     return marked.parseInline(input.raw);
   }
 
-  em({ raw, text }) {
+  em(input) {
+    const { raw, tokens } = input;
     if (raw.startsWith("*")) {
-      return `<strong>${text}</strong>`;
+      return `<strong>${this.parser.parseInline(tokens)}</strong>`;
     }
 
-    return `<em>${text}</em>`;
+    return `<em>${this.parser.parseInline(tokens)}</em>`;
   }
 
-  strong({ raw, text }) {
+  strong(input) {
+    const { raw, tokens } = input;
     const firstChar = raw.charAt(0);
     if (firstChar === "_") {
-      return `${firstChar}<em>${text}</em>${firstChar}`;
+      return `${firstChar}<em>${this.parser.parseInline(tokens)}</em>${firstChar}`;
     }
 
-    return `${firstChar}<strong>${text}</strong>${firstChar}`;
+    return `${firstChar}<strong>${this.parser.parseInline(tokens)}</strong>${firstChar}`;
   }
 
+  codespan(input) {
+    return `<code>${escapeHTML(input.text)}</code>`;
+  }
+  
   unsupported(input) {
     console.debug(input);
     return input.raw.replace("\n", "<br>");
@@ -67,6 +84,15 @@ class CustomRenderer extends marked.Renderer {
     }
     return raw.replace("\n", "<br>");
   }
+  
+  html({ text }) {
+    return escapeHTML(text);
+  }
+  
+  space(input) {
+    return input.raw.replace("\n\n", "").replaceAll("\n", "<br>");
+  }
+  
 }
 
 const renderer = new CustomRenderer();
@@ -82,9 +108,6 @@ marked.setOptions({
 
 const WhatsMarked = ({ children, oneline, className }) => {
   if (!children) return null;
-
-  // remove html
-  children = children.replaceAll("<", "&lt;");
 
   // insert blank line after blockquotes
   children = children.replace(/^(>.*)(\n(?!\n))/gm, "$1\n$2");
