@@ -71,7 +71,7 @@ class CustomRenderer extends marked.Renderer {
   }
 
   checkbox(input) {
-    return this.unsupported(input);
+    return input.checked ? "<tt>[X]</tt>" : "<tt>[ ]</tt>";
   }
 
   table(input) {
