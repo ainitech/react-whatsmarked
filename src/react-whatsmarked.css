@@ -33,6 +33,6 @@
   padding-left: 1em;
 }
 
-.whatsmarked graytext {
-  opacity: 0.7;
+.whatsmarked .graytext {
+  opacity: 0.6;
 }
