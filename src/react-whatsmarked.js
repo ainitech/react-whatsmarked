@@ -95,6 +95,27 @@ class CustomRenderer extends marked.Renderer {
   
 }
 
+// use ⣿ for gray text
+const gray = {
+  name: 'gray',
+  level: 'inline',
+  start(src) { return src.indexOf('⣿'); },
+  tokenizer(src, _tokens) {
+    const rule = /^⣿(?=\S)(.*\S)⣿/;
+    const match = rule.exec(src);
+    if (match) {
+      return {
+        type: 'gray',
+        raw: match[0],
+        text: match[1].trim(),
+      };
+    }
+  },
+  renderer(token) {
+    return `<span class="whatmarkedgray">${escapeHTML(token.text)}</span>`;
+  },
+};
+
 const renderer = new CustomRenderer();
 
 marked.setOptions({
@@ -105,6 +126,8 @@ marked.setOptions({
   smartLists: true,
   smartypants: false,
 });
+
+marked.use({ extensions: [gray] });
 
 const WhatsMarked = ({ children, oneline, className }) => {
   if (!children) return null;
