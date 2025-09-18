@@ -112,7 +112,7 @@ const gray = {
     }
   },
   renderer(token) {
-    return `<span class="whatmarkedgray">${escapeHTML(token.text)}</span>`;
+    return `<span class="graytext">${escapeHTML(token.text)}</span>`;
   },
 };
 
