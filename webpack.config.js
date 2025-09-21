@@ -17,19 +17,45 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
+            // Transpila para ES5 (React 16 exige isso para rodar em browsers antigos)
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: ['>0.25%', 'not dead', 'ie 11']
+                  },
+                  useBuiltIns: 'usage',
+                  corejs: 3
+                }
+              ],
+              '@babel/preset-react'
+            ]
           }
         }
       },
       {
         test: /\.css$/,
-           use: ['style-loader', 'css-loader']
-         }
-       ]
-     },
-     externals: {
-       react: 'react',
-       'react-dom': 'react-dom'
-     },
-     mode: 'production'
-   };
+        use: ['style-loader', 'css-loader']
+      }
+    ]
+  },
+  externals: {
+    react: {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      root: 'React'
+    },
+    'react-dom': {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'react-dom',
+      root: 'ReactDOM'
+    }
+  },
+  resolve: {
+    extensions: ['.js']
+  },
+  mode: 'production'
+};
