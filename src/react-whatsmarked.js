@@ -1,25 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2025 Claudemir Todo Bom <claudemir@todobom.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Copyright (c) 2025 Claudemir
 */
 
 import React from "react";
@@ -28,13 +10,15 @@ import { marked } from "marked";
 import "./react-whatsmarked.css";
 
 function escapeHTML(html) {
-    return html.replace(/[&<>"']/g, (char) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }[char]));
+  return html.replace(/[&<>"']/g, function (char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[char];
+  });
 }
 
 class CustomRenderer extends marked.Renderer {
@@ -43,28 +27,40 @@ class CustomRenderer extends marked.Renderer {
   }
 
   em(input) {
-    const { raw, tokens } = input;
+    var raw = input.raw;
+    var tokens = input.tokens;
     if (raw.startsWith("*")) {
-      return `<strong>${this.parser.parseInline(tokens)}</strong>`;
+      return "<strong>" + this.parser.parseInline(tokens) + "</strong>";
     }
-
-    return `<em>${this.parser.parseInline(tokens)}</em>`;
+    return "<em>" + this.parser.parseInline(tokens) + "</em>";
   }
 
   strong(input) {
-    const { raw, tokens } = input;
-    const firstChar = raw.charAt(0);
+    var raw = input.raw;
+    var tokens = input.tokens;
+    var firstChar = raw.charAt(0);
     if (firstChar === "_") {
-      return `${firstChar}<em>${this.parser.parseInline(tokens)}</em>${firstChar}`;
+      return (
+        firstChar +
+        "<em>" +
+        this.parser.parseInline(tokens) +
+        "</em>" +
+        firstChar
+      );
     }
-
-    return `${firstChar}<strong>${this.parser.parseInline(tokens)}</strong>${firstChar}`;
+    return (
+      firstChar +
+      "<strong>" +
+      this.parser.parseInline(tokens) +
+      "</strong>" +
+      firstChar
+    );
   }
 
   codespan(input) {
-    return `<code>${escapeHTML(input.text)}</code>`;
+    return "<code>" + escapeHTML(input.text) + "</code>";
   }
-  
+
   unsupported(input) {
     console.debug(input);
     return input.raw.replace("\n", "<br>");
@@ -78,48 +74,54 @@ class CustomRenderer extends marked.Renderer {
     return this.unsupported(input);
   }
 
-  link({ href, text, raw }) {
+  link(obj) {
+    var href = obj.href;
+    var text = obj.text;
+    var raw = obj.raw;
     if (href === raw) {
-      return `<a href="${href}" target="_blank">${text}</a>`;
+      return '<a href="' + href + '" target="_blank">' + text + "</a>";
     }
-    return raw.replace("\n", "<br>");
+    return raw.replace(/\n/g, "<br>");
   }
-  
-  html({ text }) {
-    return escapeHTML(text);
+
+  html(obj) {
+    return escapeHTML(obj.text);
   }
-  
+
   space(input) {
-    return input.raw.replace("\n\n", "").replaceAll("\n", "<br>");
+    return input.raw.replace(/\n\n/g, "").replace(/\n/g, "<br>");
   }
-  
 }
 
 // use ⣿ for gray text
-const gray = {
-  name: 'gray',
-  level: 'inline',
-  start(src) { return src.indexOf('⣿'); },
-  tokenizer(src, _tokens) {
-    const rule = /^⣿(?=\S)(.*\S)⣿/;
-    const match = rule.exec(src);
+var gray = {
+  name: "gray",
+  level: "inline",
+  start: function (src) {
+    return src.indexOf("⣿");
+  },
+  tokenizer: function (src) {
+    var rule = /^⣿(?=\S)(.*\S)⣿/;
+    var match = rule.exec(src);
     if (match) {
       return {
-        type: 'gray',
+        type: "gray",
         raw: match[0],
         text: match[1].trim(),
       };
     }
   },
-  renderer(token) {
-    return `<span class="graytext">${escapeHTML(token.text)}</span>`;
+  renderer: function (token) {
+    return (
+      '<span class="graytext">' + escapeHTML(token.text) + "</span>"
+    );
   },
 };
 
-const renderer = new CustomRenderer();
+var renderer = new CustomRenderer();
 
 marked.setOptions({
-  renderer,
+  renderer: renderer,
   gfm: true,
   breaks: true,
   sanitize: false,
@@ -129,18 +131,29 @@ marked.setOptions({
 
 marked.use({ extensions: [gray] });
 
-const WhatsMarked = ({ children, oneline, className }) => {
+function WhatsMarked(props) {
+  var children = props.children;
+  var oneline = props.oneline;
+  var className = props.className;
+
   if (!children) return null;
 
   // insert blank line after blockquotes
   children = children.replace(/^(>.*)(\n(?!\n))/gm, "$1\n$2");
 
-  const htmlContent = oneline ? marked.parseInline(children) : marked.parse(children);
+  var htmlContent = oneline
+    ? marked.parseInline(children)
+    : marked.parse(children);
 
-  return <div
-    className={className || oneline ? "whatsmarkedOneline" : "whatsmarked"}
-    dangerouslySetInnerHTML={{ __html: htmlContent }}
-  />;
-};
+  var appliedClass =
+    className || oneline ? "whatsmarkedOneline" : "whatsmarked";
+
+  return (
+    <div
+      className={appliedClass}
+      dangerouslySetInnerHTML={{ __html: htmlContent }}
+    />
+  );
+}
 
 export default WhatsMarked;
