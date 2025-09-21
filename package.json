@@ -1,6 +1,6 @@
 {
   "name": "react-whatsmarked",
-  "version": "0.0.1-alwaysdev",
+  "version": "0.0.1-wsw",
   "main": "lib/react-whatsmarked.js",
   "scripts": {
     "build": "webpack && copyfiles -u 1 src/*.css lib",
@@ -11,23 +11,10 @@
     "type": "git",
     "url": "https://github.com/ainitech/react-whatsmarked"
   },
-  "keywords": [
-    "react",
-    "whatsapp",
-    "markdown",
-    "renderer"
-  ],
-  "author": "",
   "license": "MIT",
-  "description": "Render text following the Whatsapp markups",
   "peerDependencies": {
     "react": ">=16.0.0",
     "react-dom": ">=16.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react-scripts": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
